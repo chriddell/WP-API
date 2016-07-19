@@ -1,0 +1,35 @@
+<html>
+<head>
+  <title>Pull in WP Posts from WP API - Test</title>
+</head>
+<body>
+
+  <h1>WP API</h1>
+
+  <div id="article-container">
+    <!-- Markup for our posts will go here -->  
+  </div>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script>
+
+  'use strict';
+
+  // Check for localStorage browser support
+  function localStorage() {
+
+    if (typeof(Storage) !== "undefined") {
+
+      // Code for localStorage/sessionStorage.
+      return true;
+
+    } else {
+
+      // Sorry! No Web Storage support..
+      return false;
+    }
+    
+  };
+</script>
+</html>
