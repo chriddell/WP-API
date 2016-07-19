@@ -17,6 +17,18 @@
 
   'use strict';
 
+  /**
+   * Check if browser has localStorage/sessionStorage
+   * http://www.w3schools.com/HTML/html5_webstorage.asp
+   */
+  function hasLocalStorage() {
+    if (typeof(Storage) !== "undefined") {
+      // Code for localStorage/sessionStorage.
+    } else {
+      // Sorry! No Web Storage support..
+    }
+  }
+
   // Global var [array] which will hold our posts
   var formattedPosts = [];
 
@@ -102,12 +114,37 @@
   };
 
   /**
+   * Save data to sessionStorage
+   */
+  function pushToSessionStorage( data ) {
+
+    // Turn JSON object to string so we can save it
+    // From w3c: Name/value pairs are always stored as strings. 
+    var data = JSON.stringify(data);
+
+    // Store the posts' data in sessionStorage
+    sessionStorage.setItem('posts', data);
+
+    // Add the posts to the DOM
+    formatPosts(JSON.parse(sessionStorage.posts));
+  }
+
+  /**
    * Anonymous functions to fire asap
    */
   (function(){
 
-    // Get the posts & store them
-    getPosts('http://z-sandbox.dev/wp-api', formatPosts);
+    // Check if we have posts in sessionStorage
+    if ( sessionStorage.posts ) {
+
+      // Get our posts from sessionStorage
+      formatPosts(JSON.parse(sessionStorage.posts));
+
+    } else {
+
+      // Get our posts from the server
+      getPosts('http://z-sandbox.dev/wp-api', pushToSessionStorage);
+    }
   })();
 
 </script>
