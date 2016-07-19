@@ -7,6 +7,7 @@
   <h1>WP API</h1>
 
   <div id="article-container">
+    <h2>Current Posts</h2>
     <!-- Markup for our posts will go here -->  
   </div>
 
@@ -16,20 +17,98 @@
 
   'use strict';
 
-  // Check for localStorage browser support
-  function localStorage() {
+  // Global var [array] which will hold our posts
+  var formattedPosts = [];
 
-    if (typeof(Storage) !== "undefined") {
+  /**
+   * Retrieve all posts from WP API
+   *
+   */
+  function getPosts( url, callback ) {
+    jQuery.ajax({
+      url: url + '/wp-json/wp/v2/posts/',
+      method: 'GET',
+      crossDomain: true,
+      beforeSend: function( xhr ) {
 
-      // Code for localStorage/sessionStorage.
-      return true;
+        // Log a console msg
+        console.log('Trying to access WP API...');
 
-    } else {
+        // Send our authorization
+        // xhr.setRequestHeader( 'Authorization', 'Basic ' + Base64.encode('admin:password') );
+      },
+      success: function( data, txtStatus, xhr ) {
 
-      // Sorry! No Web Storage support..
-      return false;
-    }
+        // Log the status code
+        console.log(txtStatus.toUpperCase() + ' [' + xhr.status + ']');
+
+        // Do something with the data
+        callback(data);
+      },
+      error: function( data, txtStatus, xhr ) {
+
+        // Tell us there's an error plz
+        console.error(txtStatus.toUpperCase() + ' [' + xhr.status + ']');
+      }
+    });
+  };
+
+  /**
+   * Store posts in global array
+   * so we can use them everywhere!
+   */
+   /*
+  function storePosts( data ) {
+
+    // For each piece of data we receive
+    $.each(data, function(key){
+
+      // Push it to end of our postsArray
+      postsArray.push(data[key]);
+
+      // Log a console msg so we know what 
+      // we're dealing with
+      console.log(data[key]);
+    });
+
+  };
+  */
+
+  /**
+   * Format the post data
+   */
+  function formatPosts( posts ) {
+
+    $.each(posts, function(key){
+
+      // Use a var for current post in loop
+      var post = posts[key];
+
+      // Use vars to hold title and content
+      var postTitle = post.title.rendered;
+      var postBody = post.content.rendered;
+      var postLink = post.link;
+
+      // Add tags to title
+      postTitle = '<h3>' + postTitle + '</h3>';
+
+      // Use var to hold all post content we have
+      var postContent = '<div class="post-item"><a href="' + postLink + '">' + postTitle + '</a></div>';
+
+      // Log the post to see what we've got
+      $('#article-container').append(postContent);
+    });
     
   };
+
+  /**
+   * Anonymous functions to fire asap
+   */
+  (function(){
+
+    // Get the posts & store them
+    getPosts('http://z-sandbox.dev/wp-api', formatPosts);
+  })();
+
 </script>
 </html>
